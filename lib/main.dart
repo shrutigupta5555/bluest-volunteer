@@ -6,10 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home.dart';
+
 import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Codec<String, String> stringToBase64 = utf8.fuse(base64);
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
@@ -48,6 +49,7 @@ Future<void> main() async {
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
+
   runApp(MyApp());
 }
 
@@ -69,18 +71,47 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
 class Selection extends StatefulWidget {
   @override
   _SelectionState createState() => _SelectionState();
 }
 
+Future<String> getPrefs() async {
+  final SharedPreferences temp = await _prefs;
+  final String _vol = temp.getString("volunteer") ?? null;
+  // print(_vol);
+  return _vol;
+}
+
 class _SelectionState extends State<Selection> {
+  String vol;
+  // getPrefs().then((value) => setState(() {
+  //         vol = value;
+  //       }));
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPrefs().then((value) {
+      setState(() {
+        vol = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     User user = FirebaseAuth.instance.currentUser;
+
     check() {
       if (user != null) {
         return AdminHome();
+      } else if (vol != null) {
+        // print(_vol);
+        return Home();
       } else {
         return MyHomePage();
       }
@@ -99,6 +130,11 @@ class _MyHomePageState extends State<MyHomePage> {
   String retrievedId;
   String retrievedPass;
   List<dynamic> retrievedData;
+
+  //initialize shared prefs
+
+  Future<String> _volunteer;
+  Future<String> _volunteerId;
   @override
   void initState() {
     super.initState();
@@ -177,6 +213,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 50,
                     minWidth: w - 100,
                     onPressed: () async {
+                      //shared prefs
+                      final SharedPreferences prefs = await _prefs;
                       //get deets from firebase
                       await FirebaseFirestore.instance
                           .collection("ngos")
@@ -193,11 +231,33 @@ class _MyHomePageState extends State<MyHomePage> {
                       for (int i = 0; i < retrievedData.length; i++) {
                         if (retrievedData[i]["id"] == id) {
                           found = true;
+                          print(
+                              "password ${retrievedData[i]["password"]} $password");
                           if (retrievedData[i]["password"] == password) {
-                            //navigate
                             //write data
+                            final String _volunteer =
+                                prefs.getString("volunteer") ?? null;
+
+                            setState(() {
+                              prefs
+                                  .setString(
+                                      "volunteer", retrievedData[i]["name"])
+                                  .then((value) {
+                                prefs.setString("id", id).then((value) {
+                                  //navigate
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Home(),
+                                      ));
+                                });
+                              });
+                            });
                           } else {
                             //do not nav
+                            if (found == false) {
+                              print("fix your shiz");
+                            }
                           }
                         }
                       }
