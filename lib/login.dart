@@ -60,6 +60,8 @@ class _LoginState extends State<Login> {
                               MaterialPageRoute(
                                 builder: (context) => AdminHome(),
                               ));
+                        } else {
+                          print("cannot navigate");
                         }
                       }).catchError((err) {
                         showDialog(

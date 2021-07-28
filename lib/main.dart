@@ -1,3 +1,5 @@
+import 'package:blueaidngo/Home.dart';
+import 'package:blueaidngo/adminHome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -75,9 +77,10 @@ class Selection extends StatefulWidget {
 class _SelectionState extends State<Selection> {
   @override
   Widget build(BuildContext context) {
+    User user = FirebaseAuth.instance.currentUser;
     check() {
-      if (FirebaseAuth.instance.currentUser != null) {
-        return Home();
+      if (user != null) {
+        return AdminHome();
       } else {
         return MyHomePage();
       }
@@ -93,6 +96,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String retrievedId;
+  String retrievedPass;
+  List<dynamic> retrievedData;
   @override
   void initState() {
     super.initState();
@@ -134,6 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     double w = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
           height: double.infinity,
@@ -170,47 +177,35 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 50,
                     minWidth: w - 100,
                     onPressed: () async {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home()));
-                      // await auth
-                      //     .createUserWithEmailAndPassword(
-                      //         email: email, password: password)
-                      //     .then((value) {
-                      //   if (value.user != null) {
-                      //     firestoreInstance
-                      //         .collection("users")
-                      //         .doc(value.user?.uid)
-                      //         .set({
-                      //       "name": stringToBase64.encode(name),
-                      //       "email": stringToBase64.encode(email),
-                      //       "country": stringToBase64.encode(cont),
-                      //     });
-                      //     Navigator.pushReplacement(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //           builder: (context) => Home(),
-                      //         ));
-                      //   }
-                      // }).catchError((err) {
-                      //   showDialog(
-                      //       context: context,
-                      //       builder: (BuildContext context) {
-                      //         return AlertDialog(
-                      //           title: Text("Error"),
-                      //           content: Text(err.message),
-                      //           // content:
-                      //           //     Text("Invalid content, try again!"),
-                      //           actions: [
-                      //             TextButton(
-                      //               child: Text("Ok"),
-                      //               onPressed: () {
-                      //                 Navigator.of(context).pop();
-                      //               },
-                      //             )
-                      //           ],
-                      //         );
-                      //       });
-                      // });
+                      //get deets from firebase
+                      await FirebaseFirestore.instance
+                          .collection("ngos")
+                          .doc("p4c")
+                          .get()
+                          .then((value) => {
+                                setState(() {
+                                  retrievedData = value.data()["volunteer"];
+                                })
+                              });
+
+                      print(retrievedData);
+                      bool found = false;
+                      for (int i = 0; i < retrievedData.length; i++) {
+                        if (retrievedData[i]["id"] == id) {
+                          found = true;
+                          if (retrievedData[i]["password"] == password) {
+                            //navigate
+                            //write data
+                          } else {
+                            //do not nav
+                          }
+                        }
+                      }
+
+                      if (found == false) {
+                        //wrong id
+
+                      }
                     },
                     child: Text(
                       "LOG IN",
@@ -265,6 +260,8 @@ textfieldcontainer(w, ht, isObs, checklol) {
               email = value;
             } else if (checklol == "password") {
               password = value;
+            } else if (checklol == "id") {
+              id = value;
             }
           },
           obscureText: isObs,
