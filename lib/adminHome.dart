@@ -1,3 +1,4 @@
+import 'package:blueaidngo/login.dart';
 import 'package:blueaidngo/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +15,8 @@ class AdminHome extends StatefulWidget {
 String newname, newid, newpass;
 int numvol = 0;
 List<dynamic> volunteers = [];
+Map lol = Map<dynamic, dynamic>();
+Map lmao = Map<dynamic, dynamic>();
 
 class _AdminHomeState extends State<AdminHome> {
   @override
@@ -76,11 +79,14 @@ class _AdminHomeState extends State<AdminHome> {
                           )),
                       IconButton(
                           onPressed: () async {
+                            lmao['id'] = volunteers[index]['id'];
+                            lmao['name'] = volunteers[index]['name'];
+                            lmao['password'] = volunteers[index]['password'];
                             await FirebaseFirestore.instance
                                 .collection('ngos')
                                 .doc('p4c')
                                 .update({
-                              "volunteer[$index]": FieldValue.delete()
+                              "volunteer": FieldValue.arrayRemove([lmao])
                             }).then((_) => print("delete successful"));
                             setState(() {
                               // names.remove(names[index]);
@@ -297,16 +303,15 @@ class _AdminHomeState extends State<AdminHome> {
                                         color: Colors.white,
                                         minWidth: 300,
                                         onPressed: () {
+                                          lol['id'] = newid;
+                                          lol['name'] = newname;
+                                          lol['password'] = newpass;
                                           FirebaseFirestore.instance
                                               .collection('ngos')
                                               .doc('p4c')
-                                              .set({
-                                            "volunteer[$numvol]['id']":
-                                                "$newid",
-                                            "volunteer[$numvol]['name']":
-                                                "$newname",
-                                            "volunteer[$numvol]['password']":
-                                                "$newpass"
+                                              .update({
+                                            'volunteer':
+                                                FieldValue.arrayUnion([lol]),
                                           }).then((_) =>
                                                   Navigator.pop(context));
                                           // setState(() {
@@ -372,9 +377,9 @@ class _AdminHomeState extends State<AdminHome> {
           //                         "volunteer[$numvol]['name']": "$newname",
           //                         "volunteer[$numvol]['password']": "$newpass"
           //                       }).then((_) => Navigator.pop(context));
-          //                       setState(() {
-          //                         // names.remove(names[index]);
-          //                       });
+          //                      setState(() {
+          //                           names.remove(names[index]);
+          //                                   });
           //                     },
           //                     child: Text("add"),
           //                   )
@@ -399,9 +404,6 @@ class _AdminHomeState extends State<AdminHome> {
     ));
   }
 }
-
-
-
 
 // InkWell(
 //                   onTap: () async {
