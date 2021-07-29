@@ -1,3 +1,4 @@
+import 'package:blueaidngo/bluetooth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -83,6 +84,16 @@ class _HomeState extends State<Home> {
                 )
               ],
             ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Bluetooth(),
+                    ));
+              },
+              child: Icon(Icons.bluetooth, color: Colors.black),
+            )
           ],
         ),
       ),

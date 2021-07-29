@@ -36,6 +36,8 @@ dependencies:
   cloud_firestore:
   country_picker:
   shared_preferences: ^2.0.6
+  flutter_reactive_ble: ^3.1.1+1
+  provider: ^5.0.0
 
 dev_dependencies:
   flutter_test:

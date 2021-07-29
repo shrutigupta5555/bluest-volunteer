@@ -12,6 +12,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'src/ble/ble_device_connector.dart';
+import 'src/ble/ble_device_interactor.dart';
+import 'src/ble/ble_scanner.dart';
+import 'src/ble/ble_status_monitor.dart';
+import 'src/ui/ble_status_screen.dart';
+import 'src/ui/device_list.dart';
+
+import 'package:provider/provider.dart';
+
+import 'src/ble/ble_logger.dart';
+
+import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+
 Codec<String, String> stringToBase64 = utf8.fuse(base64);
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   "high_importance_channel",
@@ -20,6 +33,7 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
   importance: Importance.high,
   playSound: true,
 );
+
 String cont = "Select Country";
 final auth = FirebaseAuth.instance;
 Color enabled = Colors.white;
@@ -39,6 +53,24 @@ Future<void> _firebaseMessagingbackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final _bleLogger = BleLogger();
+  final _ble = FlutterReactiveBle();
+  final _scanner = BleScanner(ble: _ble, logMessage: _bleLogger.addToLog);
+  final _monitor = BleStatusMonitor(_ble);
+  final _connector = BleDeviceConnector(
+    ble: _ble,
+    logMessage: _bleLogger.addToLog,
+  );
+  final _serviceDiscoverer = BleDeviceInteractor(
+    bleDiscoverServices: _ble.discoverServices,
+    readCharacteristic: _ble.readCharacteristic,
+    writeWithResponse: _ble.writeCharacteristicWithResponse,
+    writeWithOutResponse: _ble.writeCharacteristicWithoutResponse,
+    subscribeToCharacteristic: _ble.subscribeToCharacteristic,
+    logMessage: _bleLogger.addToLog,
+  );
+
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingbackgroundHandler);
 
@@ -50,7 +82,53 @@ Future<void> main() async {
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true, badge: true, sound: true);
 
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider.value(value: _scanner),
+        Provider.value(value: _monitor),
+        Provider.value(value: _connector),
+        Provider.value(value: _serviceDiscoverer),
+        Provider.value(value: _bleLogger),
+        StreamProvider<BleScannerState>(
+          create: (_) => _scanner.state,
+          initialData: const BleScannerState(
+            discoveredDevices: [],
+            scanIsInProgress: false,
+          ),
+        ),
+        StreamProvider<BleStatus>(
+          create: (_) => _monitor.state,
+          initialData: BleStatus.unknown,
+        ),
+        StreamProvider<ConnectionStateUpdate>(
+          create: (_) => _connector.state,
+          initialData: const ConnectionStateUpdate(
+            deviceId: 'Unknown device',
+            connectionState: DeviceConnectionState.disconnected,
+            failure: null,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Reactive BLE example',
+        home: Selection(),
+      ),
+    ),
+  );
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Consumer<BleStatus>(
+        builder: (_, status, __) {
+          if (status == BleStatus.ready) {
+            return DeviceListScreen();
+          } else {
+            return BleStatusScreen(status: status ?? BleStatus.unknown);
+          }
+        },
+      );
 }
 
 class MyApp extends StatefulWidget {
@@ -111,7 +189,7 @@ class _SelectionState extends State<Selection> {
         return AdminHome();
       } else if (vol != null) {
         // print(_vol);
-        return Home();
+        return HomeScreen();
       } else {
         return MyHomePage();
       }
@@ -248,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Home(),
+                                        builder: (context) => HomeScreen(),
                                       ));
                                 });
                               });
