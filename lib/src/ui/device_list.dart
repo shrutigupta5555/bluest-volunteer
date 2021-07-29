@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:blueaidngo/src/ble/ble_scanner.dart';
@@ -136,23 +138,45 @@ class _DeviceListState extends State<_DeviceList> {
             const SizedBox(height: 8),
             Flexible(
               child: ListView(
-                children: widget.scannerState.discoveredDevices
-                    .map(
-                      (device) => ListTile(
-                        title: Text(device.name),
-                        subtitle: Text("${device.id}\nRSSI: ${device.rssi}"),
-                        leading: const BluetoothIcon(),
-                        onTap: () async {
-                          widget.stopScan();
-                          await Navigator.push<void>(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      DeviceDetailScreen(device: device)));
-                        },
-                      ),
-                    )
-                    .toList(),
+                children: widget.scannerState.discoveredDevices.map((device) {
+                  num rssi = device.rssi;
+                  num distance = pow(10, (-69 - rssi) / 20);
+                  Color selected;
+                  if (distance < 5) {
+                    selected = Color.fromRGBO(3, 84, 102, 1);
+                  } else if (distance >= 5 && distance < 10) {
+                    selected = Color.fromRGBO(3, 84, 102, 0.95);
+                  } else if (distance >= 10 && distance < 16) {
+                    selected = Color.fromRGBO(3, 84, 102, 0.85);
+                  } else {
+                    selected = Color.fromRGBO(3, 84, 102, 0.7);
+                  }
+
+                  return Container(
+                    margin: EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          title: Text(
+                            device.name,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          minVerticalPadding: 8.0,
+                          subtitle: Text("${device.id}\n Distance: $distance m",
+                              style: TextStyle(color: Colors.white)),
+                          leading: Icon(
+                            Icons.bluetooth,
+                            color: Colors.white,
+                          ),
+                          tileColor: selected,
+                        ),
+                        SizedBox(
+                          height: 12.0,
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],
