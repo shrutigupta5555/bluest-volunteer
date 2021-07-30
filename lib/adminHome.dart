@@ -62,19 +62,25 @@ class _AdminHomeState extends State<AdminHome> {
                       Container(
                           // color: Colors.orange,
                           width: w - 90,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                volunteers[index]['name'].toString(),
-                                style: GoogleFonts.nunito(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "Volunteer ID: ${volunteers[index]['id'].toString()}",
-                                // style:,
-                              ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    volunteers[index]['name'].toString(),
+                                    style: GoogleFonts.nunito(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "Volunteer ID: ${volunteers[index]['id'].toString()}",
+                                    // style:,
+                                  ),
+                                ],
+                              )
                             ],
                           )),
                       IconButton(
@@ -129,9 +135,22 @@ class _AdminHomeState extends State<AdminHome> {
                   style: GoogleFonts.nunito(
                       color: Colors.blue[700], fontWeight: FontWeight.w900),
                 ),
+                trailing: IconButton(
+                    icon: Icon(Icons.logout),
+                    color: Colors.blue[700],
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut().then((value) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Selection(),
+                            ));
+                      });
+                    }),
               ),
             ),
           ),
+
           Row(
             children: <Widget>[
               Padding(
