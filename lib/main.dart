@@ -1,3 +1,4 @@
+import 'package:blueaidngo/AdminNav.dart';
 import 'package:blueaidngo/Home.dart';
 
 import 'package:blueaidngo/adminHome.dart';
@@ -174,7 +175,6 @@ class _SelectionState extends State<Selection> {
 
   @override
   void initState() {
-   
     super.initState();
     getPrefs().then((value) {
       setState(() {
@@ -189,7 +189,7 @@ class _SelectionState extends State<Selection> {
 
     check() {
       if (user != null) {
-        return AdminHome();
+        return AdminNav();
       } else if ((vol != "") && (vol != null)) {
         // print(_vol);
         return HomeScreen();

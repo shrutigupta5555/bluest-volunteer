@@ -1,3 +1,4 @@
+import 'package:blueaidngo/AdminNav.dart';
 import 'package:blueaidngo/adminHome.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,7 +59,7 @@ class _LoginState extends State<Login> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AdminHome(),
+                                builder: (context) => AdminNav(),
                               ));
                         } else {
                           print("cannot navigate");
