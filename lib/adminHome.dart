@@ -129,8 +129,8 @@ class _AdminHomeState extends State<AdminHome> {
               child: Container(
                 height: 50,
                 child: ListTile(
-                  leading: Image.network(
-                    "https://i.ibb.co/zxrC0Sv/logo.png",
+                  leading: Image.asset(
+                    "assets/logo.png",
                     height: 40,
                   ),
                   title: Text(
@@ -226,8 +226,8 @@ class _AdminHomeState extends State<AdminHome> {
                                                   child: Text("x"))
                                             ],
                                           ),
-                                          Image.network(
-                                            "https://i.ibb.co/zxrC0Sv/logo.png",
+                                          Image.asset(
+                                            "assets/logo.png",
                                             height: 40,
                                           ),
                                           MaterialButton(
