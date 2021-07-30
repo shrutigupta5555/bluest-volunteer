@@ -314,6 +314,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           found = true;
                           print(
                               "password ${retrievedData[i]["password"]} $password");
+
+                          password = stringToBase64.encode(password);
                           if (retrievedData[i]["password"] == password) {
                             //write data
                             final String _volunteer =

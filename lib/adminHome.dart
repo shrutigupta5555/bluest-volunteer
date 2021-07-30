@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
 
 class AdminHome extends StatefulWidget {
   // const AdminHome({ Key? key }) : super(key: key);
@@ -19,6 +20,7 @@ Map lol = Map<dynamic, dynamic>();
 Map lmao = Map<dynamic, dynamic>();
 
 class _AdminHomeState extends State<AdminHome> {
+  Codec<String, String> stringToBase64 = utf8.fuse(base64);
   @override
   Widget build(BuildContext context) {
     void x() {
@@ -322,9 +324,11 @@ class _AdminHomeState extends State<AdminHome> {
                                         color: Colors.white,
                                         minWidth: 300,
                                         onPressed: () {
+                                          String encoded =
+                                              stringToBase64.encode(newpass);
                                           lol['id'] = newid;
                                           lol['name'] = newname;
-                                          lol['password'] = newpass;
+                                          lol['password'] = encoded;
                                           FirebaseFirestore.instance
                                               .collection('ngos')
                                               .doc('p4c')
