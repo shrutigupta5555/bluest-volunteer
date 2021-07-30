@@ -8,27 +8,31 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-String id = "1234";
 Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-Future<String> getPrefs() async {
+Future<List> getPrefs() async {
   final SharedPreferences temp = await _prefs;
+  List<dynamic> arr;
   final String _vol = temp.getString("volunteer");
+  final String _id = temp.getString("id");
+  arr.add(_vol);
+  arr.add(_id);
   // print(_vol);
-  return _vol;
+  return arr;
 }
 
 class _HomeState extends State<Home> {
   // Future<String> name = getPrefs();
 
   String name;
-
+  String id;
   void initState() {
     // TODO: implement initState
     super.initState();
     getPrefs().then((value) {
       setState(() {
-        name = value;
+        name = value[0];
+        id = value[1];
       });
     });
   }

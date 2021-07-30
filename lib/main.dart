@@ -112,6 +112,7 @@ Future<void> main() async {
       ],
       child: MaterialApp(
         title: 'Flutter Reactive BLE example',
+        theme: ThemeData.dark(),
         home: Selection(),
       ),
     ),
@@ -187,7 +188,7 @@ class _SelectionState extends State<Selection> {
     check() {
       if (user != null) {
         return AdminHome();
-      } else if (vol != null) {
+      } else if (vol != "") {
         // print(_vol);
         return HomeScreen();
       } else {
@@ -323,6 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   .then((value) {
                                 prefs.setString("id", id).then((value) {
                                   //navigate
+
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
