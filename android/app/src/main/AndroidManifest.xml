@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
    <application
-        android:label="blueaidngo"
+        android:label="Blue Aid - Volunteers"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
