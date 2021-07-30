@@ -15,11 +15,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-Future<String> getPrefs() async {
+Future<String> getName() async {
   final SharedPreferences temp = await _prefs;
+
   final String _vol = temp.getString("volunteer");
-  // print(_vol);
+
   return _vol;
+}
+
+Future<String> getId() async {
+  final SharedPreferences temp = await _prefs;
+
+  final String _id = temp.getString("id");
+
+  return _id;
 }
 
 class DeviceListScreen extends StatelessWidget {
@@ -52,16 +61,24 @@ class _DeviceListState extends State<_DeviceList> {
   TextEditingController _uuidController;
 
   String name;
-
+  String volId;
   @override
   void initState() {
     super.initState();
     _uuidController = TextEditingController()
       ..addListener(() => setState(() {}));
 
-    getPrefs().then((value) {
+    getName().then((value) {
       setState(() {
+        // print("==================  $value =========================");
         name = value;
+      });
+    });
+
+    getId().then((value) {
+      setState(() {
+        print("==================  $value =========================");
+        volId = value;
       });
     });
   }
@@ -165,7 +182,7 @@ class _DeviceListState extends State<_DeviceList> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              "Volunteer Id: $id",
+                              "Volunteer Id: $volId",
                               style: GoogleFonts.nunito(
                                   color: Color.fromRGBO(3, 84, 102, 1),
                                   fontSize: 18.0),

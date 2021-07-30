@@ -1,4 +1,5 @@
 import 'package:blueaidngo/Home.dart';
+
 import 'package:blueaidngo/adminHome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -143,7 +144,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: "Blue Aid",
       color: Colors.blueAccent,
-      theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       home: Selection(),
     );
@@ -159,8 +159,10 @@ class Selection extends StatefulWidget {
 
 Future<String> getPrefs() async {
   final SharedPreferences temp = await _prefs;
-  final String _vol = temp.getString("volunteer") ?? null;
-  // print(_vol);
+  List<dynamic> arr;
+  final String _vol = temp.getString("volunteer");
+  final String _id = temp.getString("id");
+  ;
   return _vol;
 }
 
@@ -188,7 +190,7 @@ class _SelectionState extends State<Selection> {
     check() {
       if (user != null) {
         return AdminHome();
-      } else if (vol != "") {
+      } else if ((vol != "") && (vol != null)) {
         // print(_vol);
         return HomeScreen();
       } else {
@@ -273,9 +275,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text(
                     "Blue Aid",
                     style: GoogleFonts.nunito(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 40,
-                    ),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 40,
+                        color: Colors.white),
                   ),
                   padding: EdgeInsets.fromLTRB(0, 60, 0, 20),
                 ),
