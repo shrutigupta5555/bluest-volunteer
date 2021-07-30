@@ -70,14 +70,12 @@ class _DeviceListState extends State<_DeviceList> {
 
     getName().then((value) {
       setState(() {
-        // print("==================  $value =========================");
         name = value;
       });
     });
 
     getId().then((value) {
       setState(() {
-        print("==================  $value =========================");
         volId = value;
       });
     });
