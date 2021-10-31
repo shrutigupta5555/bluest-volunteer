@@ -13,24 +13,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-Future<String> getName() async {
-  final SharedPreferences temp = await _prefs;
-
-  final String _vol = temp.getString("volunteer");
-
-  return _vol;
-}
-
-Future<String> getId() async {
-  final SharedPreferences temp = await _prefs;
-
-  final String _id = temp.getString("id");
-
-  return _id;
-}
-
 class DeviceListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer2<BleScanner, BleScannerState>(
@@ -67,18 +49,6 @@ class _DeviceListState extends State<_DeviceList> {
     super.initState();
     _uuidController = TextEditingController()
       ..addListener(() => setState(() {}));
-
-    getName().then((value) {
-      setState(() {
-        name = value;
-      });
-    });
-
-    getId().then((value) {
-      setState(() {
-        volId = value;
-      });
-    });
   }
 
   @override
@@ -133,87 +103,17 @@ class _DeviceListState extends State<_DeviceList> {
                         children: [
                           Row(
                             children: [
-                              Image(image: AssetImage('assets/logo.png')),
                               SizedBox(width: 20.0),
                               Text(
-                                "Blue Aid",
+                                "CoviDisha",
                                 style: GoogleFonts.nunito(
                                     color: Colors.blue[700],
                                     fontWeight: FontWeight.w900),
                               ),
                             ],
                           ),
-                          IconButton(
-                              icon: Icon(
-                                Icons.logout,
-                                color: Colors.black,
-                              ),
-                              onPressed: () async {
-                                final SharedPreferences temp = await _prefs;
-
-                                temp.setString("volunteer", "").then((value) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Selection(),
-                                      ));
-                                });
-                              })
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 24.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Welcome $name",
-                              style: GoogleFonts.nunito(
-                                  color: Color.fromRGBO(3, 84, 102, 1),
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "Volunteer Id: $volId",
-                              style: GoogleFonts.nunito(
-                                  color: Color.fromRGBO(3, 84, 102, 1),
-                                  fontSize: 18.0),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 56.0,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Nearby Civilians",
-                          style: GoogleFonts.nunito(
-                              color: Color.fromRGBO(3, 84, 102, 1),
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.w900),
-                        ),
-                        Text(
-                          "Civilians can be tracked within 30 meters",
-                          style: GoogleFonts.nunito(
-                              color: Color.fromRGBO(1, 187, 229, 1),
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w300),
-                        ),
-                        SizedBox(
-                          height: 40.0,
-                        )
-                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -242,7 +142,7 @@ class _DeviceListState extends State<_DeviceList> {
                         if (widget.scannerState.scanIsInProgress ||
                             widget.scannerState.discoveredDevices.isNotEmpty)
                           Text(
-                            'No. of civilians: ${widget.scannerState.discoveredDevices.length}',
+                            'No. of devices: ${widget.scannerState.discoveredDevices.length}',
                             style: GoogleFonts.nunito(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(3, 84, 102, 1),

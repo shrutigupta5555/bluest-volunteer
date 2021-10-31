@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Blue Aid",
+      title: "ZZd",
       color: Colors.blueAccent,
       debugShowCheckedModeBanner: false,
       home: Selection(),
